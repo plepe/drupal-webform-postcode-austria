@@ -1,0 +1,7 @@
+webform_postcodeapi:
+  version: VERSION
+  css:
+    theme:
+      css/webform_postcodeapi.css: {}
+  dependencies:
+    - webform/webform.composite

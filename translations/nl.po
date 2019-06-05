@@ -1,0 +1,98 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright 2019 Alserda Media <info@alserdamedia.nl>
+msgid ""
+msgstr ""
+"Project-Id-Version: Webform Postcode API\n"
+"POT-Creation-Date: 2019-06-02 20:02+0000\n"
+"PO-Revision-Date: 2019-06-02 22:16+0200\n"
+"Language-Team: NL <info@alserdamedia.nl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.2.3\n"
+"Last-Translator: \n"
+"Language: nl\n"
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/alserda_webform_autoaddress.info.yml:0
+msgid "Webform Postcode API"
+msgstr ""
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/alserda_webform_autoaddress.info.yml:0
+msgid "Extends webform with an address autocomplete element."
+msgstr "Vult webform aan met een adres element dat automatisch aanvult."
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/alserda_webform_autoaddress.info.yml:0
+msgid "Custom"
+msgstr "Aangepast"
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/alserda_webform_autoaddress.routing.yml:0
+msgid "Webform Poscode API settings"
+msgstr "Webform Postcode API instellingen"
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Element/AlserdaWebformAutoaddress.php:49
+msgid "Postal code"
+msgstr "Postcode"
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Element/AlserdaWebformAutoaddress.php:61
+msgid "House number"
+msgstr "Huisnummer"
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Element/AlserdaWebformAutoaddress.php:73
+msgid "House number addition"
+msgstr "Huisnummertoevoeging"
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Element/AlserdaWebformAutoaddress.php:83
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/FormAjax/AddressFormAjax.php:41
+msgid "Street"
+msgstr "Straat"
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Element/AlserdaWebformAutoaddress.php:89
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/FormAjax/AddressFormAjax.php:48
+msgid "City/Town"
+msgstr "Plaats"
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Element/AlserdaWebformAutoaddress.php:108
+msgid "The postal code is invalid."
+msgstr "De postcode is ongeldig."
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Element/AlserdaWebformAutoaddress.php:112
+msgid ""
+"The house number is invalid. Please use house number addition for additions "
+"to your house number."
+msgstr ""
+"Het huisnummer is ongeldig. Gebruik aub huisnummertoevoeging voor "
+"toevoegingen op uw huisnummer."
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Element/AlserdaWebformAutoaddress.php:116
+msgid ""
+"The house number addition is invalid, please use only numbers and/or letters."
+msgstr ""
+"De huisnummertoevoeging is ongeldig, gebruik aub alleen nummers en/of "
+"letters."
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Form/AlserdaWebformAutoaddressSettingsForm.php:40
+msgid "Postcode NL API URL"
+msgstr ""
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Form/AlserdaWebformAutoaddressSettingsForm.php:46
+msgid "Postcode NL API Key"
+msgstr ""
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/FormAjax/AddressFormAjax.php:88
+msgid "Postcode NL API error, message: @message"
+msgstr "Postcode NL API fout, melding: @message"
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Plugin/WebformElement/AlserdaWebformAutoaddress.php:8
+msgid ""
+"Provides advanced element for upon entering postal code and house number "
+"automatically retrieve street name and city data."
+msgstr ""
+"Voorziet in een geavanceerd element dat na invoering van postcode en "
+"huisnummer automatisch de straatnaam en plaats data ophaalt."
+
+#: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Plugin/WebformElement/AlserdaWebformAutoaddress.php:8
+msgid "Composite elements"
+msgstr ""

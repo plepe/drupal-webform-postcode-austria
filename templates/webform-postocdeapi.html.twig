@@ -1,0 +1,38 @@
+{#
+/**
+ * @file
+ * Default theme implementation of a webform autoaddress composite.
+ *
+ * Available variables:
+ * - content: The webform autoaddress composite to be output.
+
+ * @see template_preprocess_webform_example_composite()
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library('webform_postcodeapi/webform_postcodeapi') }}
+{% if flexbox %}
+
+    <div class="webform-flexbox">
+      {% if content.postal_code %}
+        <div class="webform-flex webform-flex--1"><div class="webform-flex--container">{{ content.postal_code }}</div></div>
+      {% endif %}
+      {% if content.house_number %}
+        <div class="webform-flex webform-flex--1"><div class="webform-flex--container">{{ content.house_number }}</div></div>
+      {% endif %}
+      {% if content.house_number_addition %}
+        <div class="webform-flex webform-flex--1"><div class="webform-flex--container">{{ content.house_number_addition }}</div></div>
+      {% endif %}
+      {% if content.street %}
+        <div class="webform-flex webform-flex--1"><div class="webform-flex--container">{{ content.street }}</div></div>
+      {% endif %}
+      {% if content.city %}
+        <div class="webform-flex webform-flex--1"><div class="webform-flex--container">{{ content.city }}</div></div>
+      {% endif %}
+    </div>
+
+{% else %}
+  {{ content }}
+{% endif %}
+

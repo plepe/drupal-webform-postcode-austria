@@ -1,0 +1,7 @@
+name: Webform Postcode API
+type: module
+description: 'Extends webform with an address autocomplete element.'
+package: Custom
+core: 8.x
+dependencies:
+  - 'webform:webform'
