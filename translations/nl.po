@@ -42,7 +42,7 @@ msgstr "Huisnummer"
 
 #: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Element/AlserdaWebformAutoaddress.php:73
 msgid "House number addition"
-msgstr "Huisnummertoevoeging"
+msgstr Toevoeging"
 
 #: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/Element/AlserdaWebformAutoaddress.php:83
 #: /Users/jeroenbeerstra/Source/care4more/modules/custom/alserda_webform_autoaddress/src/FormAjax/AddressFormAjax.php:41
