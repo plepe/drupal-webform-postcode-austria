@@ -8,7 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Admin settings form.
  */
-class WebformPOstcodeAPISettingsForm extends ConfigFormBase
+class WebformPostcodeAPISettingsForm extends ConfigFormBase
 {
   /**
    * {@inheritdoc}
