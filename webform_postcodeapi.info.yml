@@ -1,7 +1,7 @@
-name: Webform Postcode API
+name: 'Webform Postcode API'
 type: module
-description: 'Extends webform with an address autocomplete element.'
-package: Custom
-core: 8.x
+description: 'Provides a composite Webform address element with autocompletion based on PostcodeAPI.nu data.'
+package: Webform
+core_version_requirement: ^8.8 || ^9
 dependencies:
   - 'webform:webform'
