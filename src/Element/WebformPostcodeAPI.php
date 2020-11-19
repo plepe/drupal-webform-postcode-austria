@@ -65,6 +65,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
         'wrapper' => $html_id . '--wrapper',
         'method' => 'replace',
         'event' => 'change',
+        'progress' => ['type' => 'fullscreen'],
       ],
     ];
     $elements['house_number_addition'] = [
