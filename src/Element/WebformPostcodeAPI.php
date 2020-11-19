@@ -92,28 +92,28 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     ];
     return $elements;
   }
-  
+
   /**
    * Validate the form element.
-   * 
+   *
    * @param array $element
    * @param \Drupal\webform_postcodeapi\Element\FormStateInterface $form_state
    * @param array $complete_form
    */
-  public static function validateWebformPostcdeAPI(&$element, FormStateInterface $form_state, &$complete_form) {
+  public static function validateWebformPostcodeAPI(&$element, FormStateInterface $form_state, &$complete_form) {
     $postal_code = $element['postal_code']['#value'];
     $house_number = $element['house_number']['#value'];
     $house_number_addition = $element['house_number_addition']['#value'];
     if (!FormValidation::isValidPostalCode($postal_code)) {
-      $form_state->setError($element['postal_code'], $this->t('The postal code is invalid.'));
+      $form_state->setError($element['postal_code'], t('The postal code is invalid.'));
     }
-    
+
     if (!FormValidation::isValidHouseNumber($house_number)) {
-      $form_state->setError($element['house_number'], $this->t('The house number is invalid. Please use house number addition for additions to your house number.'));
+      $form_state->setError($element['house_number'], t('The house number is invalid. Please use house number addition for additions to your house number.'));
     }
-    
+
     if (!FormValidation::isValidHouseNumberAddition($house_number_addition)) {
-      $form_state->setError($element['house_number_addition'], $this->t('The house number addition is invalid, please use only numbers and/or letters.'));
-    }    
-  } 
+      $form_state->setError($element['house_number_addition'], t('The house number addition is invalid, please use only numbers and/or letters.'));
+    }
+  }
 }
