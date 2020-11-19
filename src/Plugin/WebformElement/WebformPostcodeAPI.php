@@ -40,10 +40,10 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $value = $this->getValue($element, $webform_submission, $options);
 
     $lines = [];
-    $lines[] = ($value['street'] ? $value['street'] : '') .
+    $lines[] = ($value['street'] ?: '') .
       ($value['house_number'] ? ' ' . $value['house_number'] : '') .
       ($value['house_number_addition'] ? ' ' . $value['house_number_addition'] : '');
-    $lines[] = ($value['postal_code'] ? $value['postal_code']: '') .
+    $lines[] = ($value['postal_code'] ?: '') .
       ($value['city'] ? ' ' . $value['city'] : '');
     return $lines;
   }

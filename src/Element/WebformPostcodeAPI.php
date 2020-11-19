@@ -46,19 +46,13 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $elements['postal_code'] = [
       '#type' => 'textfield',
       '#title' => t('Postal code'),
-      '#required' => true,
+      '#required' => TRUE,
       '#attributes' => ['data-webform-composite-id' => $html_id . '--postal_code'],
-      /*'#ajax' => [
-        'callback' => 'Drupal\webform_postcodeapi\FormAjax\AddressFormAjax::autoCompleteAddress',
-        'wrapper' => $html_id . '--wrapper',
-        'method' => 'replace',
-        'event' => 'change',
-      ],*/
     ];
     $elements['house_number'] = [
       '#type' => 'textfield',
       '#title' => t('House number'),
-      '#required' => true,
+      '#required' => TRUE,
       '#attributes' => ['data-webform-composite-id' => $html_id . '--house_number'],
       '#ajax' => [
         'callback' => 'Drupal\webform_postcodeapi\FormAjax\AddressFormAjax::autoCompleteAddress',
@@ -71,23 +65,23 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $elements['house_number_addition'] = [
       '#type' => 'textfield',
       '#title' => t('House number addition'),
-      '#required' => false,
+      '#required' => FALSE,
       '#attributes' => ['data-webform-composite-id' => $html_id . '--house_number_addition'],
     ];
     $elements['wrapper'] = [
       '#type' => 'container',
-      '#attributes' => ['id' => $html_id . '--wrapper']
+      '#attributes' => ['id' => $html_id . '--wrapper'],
     ];
     $elements['wrapper']['street'] = [
       '#type' => 'textfield',
       '#title' => t('Street'),
-      '#required' => true,
+      '#required' => TRUE,
       '#attributes' => ['data-webform-composite-id' => $html_id . '--street'],
     ];
     $elements['wrapper']['city'] = [
       '#type' => 'textfield',
       '#title' => t('City/Town'),
-      '#required' => true,
+      '#required' => TRUE,
       '#attributes' => ['data-webform-composite-id' => $html_id . '--city'],
     ];
     return $elements;
@@ -97,10 +91,14 @@ class WebformPostcodeAPI extends WebformCompositeBase {
    * Validate the form element.
    *
    * @param array $element
-   * @param \Drupal\webform_postcodeapi\Element\FormStateInterface $form_state
-   * @param array $complete_form
+   *   An associative array containing the properties and children of the
+   *   generic form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form for the form this element belongs to.
    */
-  public static function validateWebformPostcodeAPI(&$element, FormStateInterface $form_state, &$complete_form) {
+  // phpcs:disable
+  public static function validateWebformPostcodeAPI(array &$element, FormStateInterface $form_state) {
+    // phpcs:enable
     $postal_code = $element['postal_code']['#value'];
     $house_number = $element['house_number']['#value'];
     $house_number_addition = $element['house_number_addition']['#value'];
@@ -116,4 +114,5 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       $form_state->setError($element['house_number_addition'], t('The house number addition is invalid, please use only numbers and/or letters.'));
     }
   }
+
 }

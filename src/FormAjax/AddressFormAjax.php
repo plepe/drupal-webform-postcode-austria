@@ -13,21 +13,27 @@ use Drupal\webform_postcodeapi\Classes\FormValidation;
 class AddressFormAjax {
 
   /**
+   * Ajax callback for the autocomplete address.
+   *
    * @param array $form
+   *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    *
    * @return array
+   *   A renderable array as expected by the render service.
    */
   public static function autoCompleteAddress(array &$form, FormStateInterface $form_state) {
     $triggeringElement = $form_state->getTriggeringElement();
-    // We need the parent element, but since this is a webform element the name is not static.
+    // We need the parent element, but since this is a Webform element the name
+    // is not static.
     $parent = $triggeringElement['#parents'][0];
-    $addressValues = $form_state->getValues() ?? null;
+    $addressValues = $form_state->getValues();
 
     $zipcode = $addressValues[$parent]['postal_code'] ?? '';
     $houseNumber = $addressValues[$parent]['house_number'] ?? '';
 
-    $address = null;
+    $address = NULL;
     if ($zipcode && $houseNumber) {
       $address = self::getAddress($zipcode, $houseNumber);
     }
@@ -41,40 +47,43 @@ class AddressFormAjax {
           '#title' => t('Street'),
           '#required' => TRUE,
           '#attributes' => ['data-webform-composite-id' => $parent . '--street'],
-          '#value' => (is_object($address) ? $address->street: null),
+          '#value' => (is_object($address) ? $address->street : NULL),
         ],
         'city' => [
           '#type' => 'textfield',
           '#title' => t('City/Town'),
           '#required' => TRUE,
           '#attributes' => ['data-webform-composite-id' => $parent . '--city'],
-          '#value' => (is_object($address) ? $address->city: null),
+          '#value' => (is_object($address) ? $address->city : NULL),
         ],
-      ]
+      ],
     ];
   }
 
   /**
-   * Retrieves an address based on zipcode and housenumber
+   * Retrieves an address based on zipcode and housenumber.
    *
    * @param string $zipcode
+   *   The zipcode.
    * @param string $houseNumber
+   *   The house number.
    *
-   * @return mixed|null
+   * @return object|null
+   *   An address object when available, or NULL.
    */
   private static function getAddress($zipcode, $houseNumber) {
 
     $api_url = \Drupal::config('webform_postcodeapi.settings')
-        ->get('postcodenlapi_url');
+      ->get('postcodenlapi_url');
     $api_key = \Drupal::config('webform_postcodeapi.settings')
-        ->get('postcodenlapi_key');
+      ->get('postcodenlapi_key');
 
     if (empty($zipcode) || empty($houseNumber) || empty($api_key)) {
-      return null;
+      return NULL;
     }
 
     if (!FormValidation::isValidPostalcode($zipcode) || !FormValidation::isValidHouseNumber($houseNumber)) {
-      return null;
+      return NULL;
     }
 
     $zipcode = preg_replace('/\s/', '', $zipcode);
@@ -82,13 +91,15 @@ class AddressFormAjax {
     $client = new Client();
 
     try {
-      $response = $client->get($api_url . '/' . $zipcode . '/' . $houseNumber, [ 'headers' => [ 'x-api-key' => $api_key ] ]);
-    } catch (RequestException $e)  {
-      $message = ($e->hasResponse() ? 'message: ' . $e->getMessage(): 'message: none');
-      \Drupal::logger('webform_postcodeapi')->error('Postcode NL API error, message: @message', [ '@message' => $message ]);
-      return null;
+      $response = $client->get($api_url . '/' . $zipcode . '/' . $houseNumber, ['headers' => ['x-api-key' => $api_key]]);
+    }
+    catch (RequestException $e) {
+      $message = ($e->hasResponse() ? 'message: ' . $e->getMessage() : 'message: none');
+      \Drupal::logger('webform_postcodeapi')->error('Postcode NL API error, message: @message', ['@message' => $message]);
+      return NULL;
     }
 
     return json_decode((string) $response->getBody());
   }
+
 }
