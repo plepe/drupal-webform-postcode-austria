@@ -2,7 +2,6 @@
 
 namespace Drupal\webform_postcodeapi\Element;
 
-use Drupal\Component\Utility\Html;
 use Drupal\webform\Element\WebformCompositeBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform_postcodeapi\Classes\FormValidation;
@@ -41,7 +40,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
    */
   public static function getCompositeElements(array $element) {
     // Generate an unique ID that can be used by #states.
-    $html_id = Html::getUniqueId('webform_postcodeapi');
+    $html_id = $element['#webform_key'] ?? NULL;
 
     $elements = [];
     $elements['postal_code'] = [
