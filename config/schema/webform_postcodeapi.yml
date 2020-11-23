@@ -1,0 +1,9 @@
+webform_postcodeapi.settings:
+  type: config_object
+  mapping:
+    postcodenlapi_key:
+      label: 'Postcode NL API URL'
+      type: string
+    postcodenlapi_url:
+      label: 'Postcode NL API Key'
+      type: uri
