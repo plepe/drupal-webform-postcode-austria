@@ -1,0 +1,4 @@
+services:
+  webform_postcodeapi.address_lookup:
+    class: Drupal\webform_postcodeapi\AddressLookup
+    arguments: ['@cache.default', '@http_client_factory', '@config.factory']

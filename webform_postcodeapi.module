@@ -2,7 +2,7 @@
 
 /**
  * @file
- * An autocomplete webform addon for postal code/house number.
+ * Hook implementations for this module.
  */
 
 module_load_include('inc', 'webform', 'includes/webform.theme.template');
@@ -19,9 +19,9 @@ function webform_postcodeapi_theme() {
 }
 
 /**
- * Prepares variables for webform example composite templates.
+ * Prepares variables for webform_postcodeapi composite templates.
  *
- * Default template: webform-example-composite.html.twig.
+ * Default template: webform-postcodeapi.html.twig.
  *
  * @param array $variables
  *   An associative array containing:

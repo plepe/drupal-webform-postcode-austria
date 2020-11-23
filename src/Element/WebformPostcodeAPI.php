@@ -2,6 +2,7 @@
 
 namespace Drupal\webform_postcodeapi\Element;
 
+use Drupal\Component\Utility\Html;
 use Drupal\webform\Element\WebformCompositeBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform_postcodeapi\Classes\FormValidation;
@@ -17,9 +18,6 @@ use Drupal\webform_postcodeapi\Classes\FormValidation;
  * or composites (i.e. webform_address)
  *
  * @FormElement("webform_postcodeapi")
- *
- * @see \Drupal\webform\Element\WebformCompositeBase
- * @see \Drupal\webform_postcodeapi\Element\AlserdaWebformAutoaddress
  */
 class WebformPostcodeAPI extends WebformCompositeBase {
 
@@ -27,12 +25,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
    * {@inheritdoc}
    */
   public function getInfo() {
-    return parent::getInfo() + [
-      '#theme' => 'webform_postcodeapi',
-      '#element_validate' => [
-          [static::class, 'validateWebformPostcodeAPI'],
-      ],
-    ];
+    return parent::getInfo() + ['#theme' => 'webform_postcodeapi'];
   }
 
   /**
@@ -47,16 +40,14 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       '#type' => 'textfield',
       '#title' => t('Postal code'),
       '#required' => TRUE,
-      '#attributes' => ['data-webform-composite-id' => $html_id . '--postal_code'],
     ];
     $elements['house_number'] = [
-      '#type' => 'textfield',
+      '#type' => 'number',
       '#title' => t('House number'),
       '#required' => TRUE,
-      '#attributes' => ['data-webform-composite-id' => $html_id . '--house_number'],
       '#ajax' => [
-        'callback' => 'Drupal\webform_postcodeapi\FormAjax\AddressFormAjax::autoCompleteAddress',
-        'wrapper' => $html_id . '--wrapper',
+        'callback' => [static::class, 'autoCompleteAddress'],
+        'wrapper' => Html::cleanCssIdentifier($html_id) . '--wrapper',
         'method' => 'replace',
         'event' => 'change',
         'progress' => ['type' => 'fullscreen'],
@@ -66,25 +57,72 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       '#type' => 'textfield',
       '#title' => t('House number addition'),
       '#required' => FALSE,
-      '#attributes' => ['data-webform-composite-id' => $html_id . '--house_number_addition'],
     ];
     $elements['wrapper'] = [
       '#type' => 'container',
-      '#attributes' => ['id' => $html_id . '--wrapper'],
+      '#attributes' => ['id' => Html::cleanCssIdentifier($html_id) . '--wrapper'],
     ];
     $elements['wrapper']['street'] = [
       '#type' => 'textfield',
       '#title' => t('Street'),
       '#required' => TRUE,
-      '#attributes' => ['data-webform-composite-id' => $html_id . '--street'],
+      '#after_build' => [[static::class, 'afterBuild']],
     ];
     $elements['wrapper']['city'] = [
       '#type' => 'textfield',
       '#title' => t('City/Town'),
       '#required' => TRUE,
-      '#attributes' => ['data-webform-composite-id' => $html_id . '--city'],
+      '#after_build' => [[static::class, 'afterBuild']],
     ];
+
     return $elements;
+  }
+
+  /**
+   * Performs the after_build callback.
+   */
+  public static function afterBuild(array $element, FormStateInterface $form_state) {
+    // Add #states targeting the specific element and table row.
+    preg_match('/^(.+)\[[^]]+]$/', $element['#name'], $match);
+    $composite_name = $match[1];
+    $element['#states']['disabled'] = [
+      [':input[name="' . $composite_name . '[postal_code]"]' => ['empty' => TRUE]],
+      [':input[name="' . $composite_name . '[house_number]"]' => ['empty' => TRUE]],
+    ];
+    // Add .js-form-wrapper to wrapper (ie td) to prevent #states API from
+    // disabling the entire table row when this element is disabled.
+    $element['#wrapper_attributes']['class'][] = 'js-form-wrapper';
+    return $element;
+  }
+
+  /**
+   * Ajax callback function for the webform_postcodeapi element.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return array
+   *   A renderable array as expected by the render service.
+   */
+  public static function autoCompleteAddress(array $form, FormStateInterface $form_state) {
+    $triggeringElement = $form_state->getTriggeringElement();
+    // We need the parent element, but since this is a Webform element the name
+    // is not static.
+    $parent = $triggeringElement['#parents'][0];
+    $addressValues = $form_state->getValues();
+
+    $zipcode = $addressValues[$parent]['postal_code'] ?? '';
+    $houseNumber = $addressValues[$parent]['house_number'] ?? '';
+
+    if ($zipcode && $houseNumber) {
+      $address = \Drupal::service('webform_postcodeapi.address_lookup')->getAddress($zipcode, $houseNumber);
+      $form['elements'][$parent]['wrapper']['street']['#value'] = $address['street'];
+      $form['elements'][$parent]['wrapper']['city']['#value'] = $address['city'];
+    }
+
+    return $form['elements'][$parent]['wrapper'];
   }
 
   /**
