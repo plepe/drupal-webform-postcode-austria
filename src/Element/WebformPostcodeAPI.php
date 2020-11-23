@@ -3,6 +3,7 @@
 namespace Drupal\webform_postcodeapi\Element;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\webform\Element\WebformCompositeBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform_postcodeapi\Classes\FormValidation;
@@ -116,13 +117,17 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $zipcode = $addressValues[$parent]['postal_code'] ?? '';
     $houseNumber = $addressValues[$parent]['house_number'] ?? '';
 
+    // Remove the trigger element field.
+    array_pop($triggeringElement['#array_parents']);
+    $form_elements = NestedArray::getValue($form, $triggeringElement['#array_parents']);
+
     if ($zipcode && $houseNumber) {
       $address = \Drupal::service('webform_postcodeapi.address_lookup')->getAddress($zipcode, $houseNumber);
-      $form['elements'][$parent]['wrapper']['street']['#value'] = $address['street'];
-      $form['elements'][$parent]['wrapper']['city']['#value'] = $address['city'];
+      $form_elements['wrapper']['street']['#value'] = $address['street'];
+      $form_elements['wrapper']['city']['#value'] = $address['city'];
     }
 
-    return $form['elements'][$parent]['wrapper'];
+    return $form_elements['wrapper'];
   }
 
   /**
