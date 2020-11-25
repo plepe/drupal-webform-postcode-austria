@@ -37,9 +37,9 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $html_id = $element['#webform_key'] ?? NULL;
 
     $elements = [];
-    $elements['postal_code'] = [
+    $elements['zip_code'] = [
       '#type' => 'textfield',
-      '#title' => t('Postal code'),
+      '#title' => t('Zip code'),
       '#required' => TRUE,
     ];
     $elements['house_number'] = [
@@ -54,7 +54,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
         'progress' => ['type' => 'fullscreen'],
       ],
     ];
-    $elements['house_number_addition'] = [
+    $elements['house_number_ext'] = [
       '#type' => 'textfield',
       '#title' => t('House number addition'),
       '#required' => FALSE,
@@ -69,7 +69,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       '#required' => TRUE,
       '#after_build' => [[static::class, 'afterBuild']],
     ];
-    $elements['wrapper']['city'] = [
+    $elements['wrapper']['town'] = [
       '#type' => 'textfield',
       '#title' => t('City/Town'),
       '#required' => TRUE,
@@ -87,7 +87,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     preg_match('/^(.+)\[[^]]+]$/', $element['#name'], $match);
     $composite_name = $match[1];
     $element['#states']['disabled'] = [
-      [':input[name="' . $composite_name . '[postal_code]"]' => ['empty' => TRUE]],
+      [':input[name="' . $composite_name . '[zip_code]"]' => ['empty' => TRUE]],
       [':input[name="' . $composite_name . '[house_number]"]' => ['empty' => TRUE]],
     ];
     // Add .js-form-wrapper to wrapper (ie td) to prevent #states API from
@@ -114,7 +114,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $parent = $triggeringElement['#parents'][0];
     $addressValues = $form_state->getValues();
 
-    $zipcode = $addressValues[$parent]['postal_code'] ?? '';
+    $zipcode = $addressValues[$parent]['zip_code'] ?? '';
     $houseNumber = $addressValues[$parent]['house_number'] ?? '';
 
     // Remove the trigger element field.
@@ -124,7 +124,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     if ($zipcode && $houseNumber) {
       $address = \Drupal::service('webform_postcodeapi.address_lookup')->getAddress($zipcode, $houseNumber);
       $form_elements['wrapper']['street']['#value'] = $address['street'];
-      $form_elements['wrapper']['city']['#value'] = $address['city'];
+      $form_elements['wrapper']['town']['#value'] = $address['city'];
     }
 
     return $form_elements['wrapper'];
@@ -142,19 +142,19 @@ class WebformPostcodeAPI extends WebformCompositeBase {
   // phpcs:disable
   public static function validateWebformPostcodeAPI(array &$element, FormStateInterface $form_state) {
     // phpcs:enable
-    $postal_code = $element['postal_code']['#value'];
+    $zip_code = $element['zip_code']['#value'];
     $house_number = $element['house_number']['#value'];
-    $house_number_addition = $element['house_number_addition']['#value'];
-    if (!FormValidation::isValidPostalCode($postal_code)) {
-      $form_state->setError($element['postal_code'], t('The postal code is invalid.'));
+    $house_number_ext = $element['house_number_ext']['#value'];
+    if (!FormValidation::isValidPostalCode($zip_code)) {
+      $form_state->setError($element['zip_code'], t('The postal code is invalid.'));
     }
 
     if (!FormValidation::isValidHouseNumber($house_number)) {
       $form_state->setError($element['house_number'], t('The house number is invalid. Please use house number addition for additions to your house number.'));
     }
 
-    if (!FormValidation::isValidHouseNumberAddition($house_number_addition)) {
-      $form_state->setError($element['house_number_addition'], t('The house number addition is invalid, please use only numbers and/or letters.'));
+    if (!FormValidation::isValidHouseNumberAddition($house_number_ext)) {
+      $form_state->setError($element['house_number_ext'], t('The house number addition is invalid, please use only numbers and/or letters.'));
     }
   }
 

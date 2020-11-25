@@ -10,11 +10,11 @@ class FormValidation {
   /**
    * Validates input is a postal code.
    */
-  public static function isValidPostalCode($postal_code) {
-    if (empty($postal_code)) {
+  public static function isValidPostalCode($zip_code) {
+    if (empty($zip_code)) {
       return TRUE;
     }
-    return (bool) preg_match('~\A[1-9]\d{3} ?[a-zA-Z]{2}\z~', $postal_code);
+    return (bool) preg_match('~\A[1-9]\d{3} ?[a-zA-Z]{2}\z~', $zip_code);
   }
 
   /**
@@ -30,11 +30,11 @@ class FormValidation {
   /**
    * Validates input is a house number addition.
    */
-  public static function isValidHouseNumberAddition($house_number_addition) {
-    if (empty($house_number_addition)) {
+  public static function isValidHouseNumberAddition($house_number_ext) {
+    if (empty($house_number_ext)) {
       return TRUE;
     }
-    return (bool) preg_match('~^[0-9a-z]{1,4}$~i', $house_number_addition);
+    return (bool) preg_match('~^[0-9a-z]{1,4}$~i', $house_number_ext);
   }
 
 }

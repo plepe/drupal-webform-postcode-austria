@@ -11,7 +11,7 @@ use Drupal\webform\WebformSubmissionInterface;
  * @WebformElement(
  *   id = "webform_postcodeapi",
  *   label = @Translation("Webform Postcode API"),
- *   description = @Translation("Provides advanced element for upon entering postal code and house number automatically retrieve street name and city data."),
+ *   description = @Translation("Provides advanced element for upon entering postal code and house number automatically retrieve street name and town data."),
  *   category = @Translation("Composite elements"),
  *   composite = TRUE,
  *   multiline = TRUE,
@@ -42,9 +42,9 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $lines = [];
     $lines[] = ($value['street'] ?: '') .
       ($value['house_number'] ? ' ' . $value['house_number'] : '') .
-      ($value['house_number_addition'] ? ' ' . $value['house_number_addition'] : '');
-    $lines[] = ($value['postal_code'] ?: '') .
-      ($value['city'] ? ' ' . $value['city'] : '');
+      ($value['house_number_ext'] ? ' ' . $value['house_number_ext'] : '');
+    $lines[] = ($value['zip_code'] ?: '') .
+      ($value['town'] ? ' ' . $value['town'] : '');
     return $lines;
   }
 

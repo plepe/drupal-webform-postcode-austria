@@ -12,14 +12,14 @@
  */
 #}
 {{ attach_library('webform_postcodeapi/webform_postcodeapi') }}
-{{ content.postal_code }}
+{{ content.zip_code }}
 <div class="m-form__group">
     <div class="m-form__group-item m-form__group-item--3">
         {{ content.house_number }}
     </div>
     <div class="m-form__group-item">
-        {{ content.house_number_addition }}
+        {{ content.house_number_ext }}
     </div>
 </div>
-{{ content|without('postal_code','house_number','house_number_addition') }}
+{{ content|without('zip_code','house_number','house_number_ext') }}
 
