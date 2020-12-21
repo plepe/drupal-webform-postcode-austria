@@ -35,12 +35,14 @@ class WebformPostcodeAPI extends WebformCompositeBase {
   public static function getCompositeElements(array $element) {
     // Generate an unique ID that can be used by #states.
     $html_id = $element['#webform_key'] ?? NULL;
+    $wrapper_id = Html::cleanCssIdentifier($html_id) . '--wrapper';
 
     $elements = [];
     $elements['zip_code'] = [
       '#type' => 'textfield',
       '#title' => t('Zip code'),
       '#required' => TRUE,
+      '#prefix' => "<div id='$wrapper_id'>",
     ];
     $elements['house_number'] = [
       '#type' => 'number',
@@ -48,7 +50,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       '#required' => TRUE,
       '#ajax' => [
         'callback' => [static::class, 'autoCompleteAddress'],
-        'wrapper' => Html::cleanCssIdentifier($html_id) . '--wrapper',
+        'wrapper' => $wrapper_id,
         'method' => 'replace',
         'event' => 'change',
         'progress' => ['type' => 'fullscreen'],
@@ -61,7 +63,6 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     ];
     $elements['wrapper'] = [
       '#type' => 'container',
-      '#attributes' => ['id' => Html::cleanCssIdentifier($html_id) . '--wrapper'],
     ];
     $elements['wrapper']['street'] = [
       '#type' => 'textfield',
@@ -74,6 +75,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       '#title' => t('City/Town'),
       '#required' => TRUE,
       '#after_build' => [[static::class, 'afterBuild']],
+      '#suffix' => '</div>',
     ];
 
     return $elements;
@@ -121,13 +123,23 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     array_pop($triggeringElement['#array_parents']);
     $form_elements = NestedArray::getValue($form, $triggeringElement['#array_parents']);
 
-    if ($zipcode && $houseNumber) {
+    if ($zipcode && $houseNumber && FormValidation::isValidPostalCode($zipcode) && FormValidation::isValidHouseNumber($houseNumber)) {
       $address = \Drupal::service('webform_postcodeapi.address_lookup')->getAddress($zipcode, $houseNumber);
       $form_elements['wrapper']['street']['#value'] = $address['street'];
       $form_elements['wrapper']['town']['#value'] = $address['city'];
     }
 
-    return $form_elements['wrapper'];
+    if (!FormValidation::isValidPostalCode($zipcode)) {
+      $form_elements['zip_code']['#description'] = t('The postal code is invalid.');
+      $form_elements['zip_code']['#attributes']['class'][] = 'error';
+    }
+    if (!FormValidation::isValidHouseNumber($houseNumber)) {
+      $form_elements['house_number']['#description'] = t('The house number is invalid. Please use house number addition for additions to your house number.');
+      $form_elements['house_number']['#attributes']['class'][] = 'error';
+    }
+
+
+    return $form_elements;
   }
 
   /**
