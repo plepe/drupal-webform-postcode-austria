@@ -48,6 +48,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       '#type' => 'number',
       '#title' => t('House number'),
       '#required' => TRUE,
+      '#maxlength' => 12,
       '#ajax' => [
         'callback' => [static::class, 'autoCompleteAddress'],
         'wrapper' => $wrapper_id,
@@ -59,7 +60,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $elements['house_number_ext'] = [
       '#type' => 'textfield',
       '#title' => t('House number addition'),
-      '#required' => FALSE,
+      '#maxlength' => 8,
     ];
     $elements['wrapper'] = [
       '#type' => 'container',
@@ -74,6 +75,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       '#type' => 'textfield',
       '#title' => t('City/Town'),
       '#required' => TRUE,
+      '#maxlength' => 60,
       '#after_build' => [[static::class, 'afterBuild']],
       '#suffix' => '</div>',
     ];
@@ -125,12 +127,18 @@ class WebformPostcodeAPI extends WebformCompositeBase {
 
     if ($zipcode && $houseNumber && FormValidation::isValidPostalCode($zipcode) && FormValidation::isValidHouseNumber($houseNumber)) {
       $address = \Drupal::service('webform_postcodeapi.address_lookup')->getAddress($zipcode, $houseNumber);
-      $form_elements['wrapper']['street']['#value'] = $address['street'];
-      $form_elements['wrapper']['town']['#value'] = $address['city'];
+      if ($address) {
+        $form_elements['wrapper']['street']['#value'] = $address['street'];
+        $form_elements['wrapper']['town']['#value'] = $address['city'];
+      }
+      else {
+        $form_elements['house_number']['#description'] = t('Could not find a street and city/town for this postal code.');
+        $form_elements['house_number']['#attributes']['class'][] = 'error';
+      }
     }
 
     if (!FormValidation::isValidPostalCode($zipcode)) {
-      $form_elements['zip_code']['#description'] = t('The postal code is invalid.');
+      $form_elements['zip_code']['#description'] = t('Zip code must consist of 4 numbers + 2 letters without spaces.');
       $form_elements['zip_code']['#attributes']['class'][] = 'error';
     }
     if (!FormValidation::isValidHouseNumber($houseNumber)) {

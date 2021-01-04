@@ -14,7 +14,7 @@ class FormValidation {
     if (empty($zip_code)) {
       return TRUE;
     }
-    return (bool) preg_match('~\A[1-9]\d{3} ?[a-zA-Z]{2}\z~', $zip_code);
+    return (bool) preg_match('/^[1-9][\d]{3}(?!sa|sd|ss)[a-z]{2}$/i', $zip_code);
   }
 
   /**
