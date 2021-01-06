@@ -26,7 +26,12 @@ class WebformPostcodeAPI extends WebformCompositeBase {
    * {@inheritdoc}
    */
   public function getInfo() {
-    return parent::getInfo() + ['#theme' => 'webform_postcodeapi'];
+    return parent::getInfo() + [
+      '#theme' => 'webform_postcodeapi',
+      '#element_validate' => [
+        [static::class, 'validateWebformPostcodeAPI'],
+      ],
+    ];
   }
 
   /**
@@ -146,7 +151,6 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       $form_elements['house_number']['#attributes']['class'][] = 'error';
     }
 
-
     return $form_elements;
   }
 
@@ -166,7 +170,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $house_number = $element['house_number']['#value'];
     $house_number_ext = $element['house_number_ext']['#value'];
     if (!FormValidation::isValidPostalCode($zip_code)) {
-      $form_state->setError($element['zip_code'], t('The postal code is invalid.'));
+      $form_state->setError($element['zip_code'], t('Zip code must consist of 4 numbers + 2 letters without spaces.'));
     }
 
     if (!FormValidation::isValidHouseNumber($house_number)) {
