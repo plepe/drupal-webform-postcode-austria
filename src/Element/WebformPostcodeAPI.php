@@ -46,13 +46,11 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $elements['zip_code'] = [
       '#type' => 'textfield',
       '#title' => t('Zip code'),
-      '#required' => TRUE,
       '#prefix' => "<div id='$wrapper_id'>",
     ];
     $elements['house_number'] = [
       '#type' => 'number',
       '#title' => t('House number'),
-      '#required' => TRUE,
       '#maxlength' => 12,
       '#ajax' => [
         'callback' => [static::class, 'autoCompleteAddress'],
@@ -67,31 +65,38 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       '#title' => t('House number addition'),
       '#maxlength' => 8,
     ];
-    $elements['wrapper'] = [
-      '#type' => 'container',
-    ];
-    $elements['wrapper']['street'] = [
+    $elements['street'] = [
       '#type' => 'textfield',
       '#title' => t('Street'),
-      '#required' => TRUE,
-      '#after_build' => [[static::class, 'afterBuild']],
+      '#after_build' => [[static::class, 'setDisabledState']],
     ];
-    $elements['wrapper']['town'] = [
+    $elements['town'] = [
       '#type' => 'textfield',
       '#title' => t('City/Town'),
-      '#required' => TRUE,
       '#maxlength' => 60,
-      '#after_build' => [[static::class, 'afterBuild']],
+      '#after_build' => [[static::class, 'setDisabledState']],
       '#suffix' => '</div>',
     ];
+
+    if (empty($element['#required'])) {
+      $required_composite_elements = [
+        'zip_code',
+        'house_number',
+        'street',
+        'town',
+      ];
+      foreach ($required_composite_elements as $required_composite_element) {
+        $elements[$required_composite_element]['#after_build'][] = [static::class, 'setRequiredState'];
+      }
+    }
 
     return $elements;
   }
 
   /**
-   * Performs the after_build callback.
+   * Performs the after_build callback: set disabled state.
    */
-  public static function afterBuild(array $element, FormStateInterface $form_state) {
+  public static function setDisabledState(array $element, FormStateInterface $form_state) {
     // Add #states targeting the specific element and table row.
     preg_match('/^(.+)\[[^]]+]$/', $element['#name'], $match);
     $composite_name = $match[1];
@@ -102,6 +107,21 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     // Add .js-form-wrapper to wrapper (ie td) to prevent #states API from
     // disabling the entire table row when this element is disabled.
     $element['#wrapper_attributes']['class'][] = 'js-form-wrapper';
+    return $element;
+  }
+
+  /**
+   * Performs the after_build callback: set required state.
+   */
+  public static function setRequiredState(array $element, FormStateInterface $form_state) {
+    preg_match('/^(.+)\[[^]]+]$/', $element['#name'], $match);
+    $composite_name = $match[1];
+    $element['#states']['required'] = [
+      [':input[name="' . $composite_name . '[zip_code]"]' => ['empty' => FALSE]],
+      [':input[name="' . $composite_name . '[house_number]"]' => ['empty' => FALSE]],
+      [':input[name="' . $composite_name . '[street]"]' => ['empty' => FALSE]],
+      [':input[name="' . $composite_name . '[town]"]' => ['empty' => FALSE]],
+    ];
     return $element;
   }
 
@@ -133,8 +153,8 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     if ($zipcode && $houseNumber && FormValidation::isValidPostalCode($zipcode) && FormValidation::isValidHouseNumber($houseNumber)) {
       $address = \Drupal::service('webform_postcodeapi.address_lookup')->getAddress($zipcode, $houseNumber);
       if ($address) {
-        $form_elements['wrapper']['street']['#value'] = $address['street'];
-        $form_elements['wrapper']['town']['#value'] = $address['city'];
+        $form_elements['street']['#value'] = $address['street'];
+        $form_elements['town']['#value'] = $address['city'];
       }
       else {
         $form_elements['house_number']['#description'] = t('Could not find a street and city/town for this postal code.');
@@ -166,6 +186,30 @@ class WebformPostcodeAPI extends WebformCompositeBase {
   // phpcs:disable
   public static function validateWebformPostcodeAPI(array &$element, FormStateInterface $form_state) {
     // phpcs:enable
+    $required_composite_elements = [
+      'zip_code',
+      'house_number',
+      'street',
+      'town',
+    ];
+    $element_has_data = FALSE;
+    foreach ($required_composite_elements as $required_composite_element) {
+      if (!empty($element[$required_composite_element]['#value'])) {
+        $element_has_data = TRUE;
+        break;
+      }
+    }
+
+    if ($element_has_data) {
+      foreach ($required_composite_elements as $required_composite_element) {
+        if (empty($element[$required_composite_element]['#value'])) {
+          $form_state->setError($element[$required_composite_element], t('@composite_element_label is required', [
+            '@composite_element_label' => $element[$required_composite_element]['#title'],
+          ]));
+        }
+      }
+    }
+
     $zip_code = $element['zip_code']['#value'];
     $house_number = $element['house_number']['#value'];
     $house_number_ext = $element['house_number_ext']['#value'];

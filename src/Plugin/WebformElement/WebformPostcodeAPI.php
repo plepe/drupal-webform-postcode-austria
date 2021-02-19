@@ -2,6 +2,7 @@
 
 namespace Drupal\webform_postcodeapi\Plugin\WebformElement;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Plugin\WebformElement\WebformCompositeBase;
 use Drupal\webform\WebformSubmissionInterface;
 
@@ -46,6 +47,37 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $lines[] = ($value['zip_code'] ?: '') .
       ($value['town'] ? ' ' . $value['town'] : '');
     return $lines;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function form(array $form, FormStateInterface $form_state) {
+    $form = parent::form($form, $form_state);
+
+    // Disable element settings, since composite element configuration is
+    // opinionated.
+    $form['composite']['#access'] = FALSE;
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
+    parent::prepare($element, $webform_submission);
+
+    if (!empty($element['#required'])) {
+      $element['#zip_code__required'] = TRUE;
+      $element['#house_number__required'] = TRUE;
+      $element['#street__required'] = TRUE;
+      $element['#town__required'] = TRUE;
+      $element['#webform_composite_elements']['zip_code']['#required'] = $element['#required'];
+      $element['#webform_composite_elements']['house_number']['#required'] = $element['#required'];
+      $element['#webform_composite_elements']['street']['#required'] = $element['#required'];
+      $element['#webform_composite_elements']['town']['#required'] = $element['#required'];
+    }
   }
 
 }
