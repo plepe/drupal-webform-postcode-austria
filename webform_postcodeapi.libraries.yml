@@ -1,4 +1,5 @@
 webform_postcodeapi:
-  version: VERSION
+  js:
+    js/webform-postcodeapi.js: {}
   dependencies:
     - webform/webform.composite

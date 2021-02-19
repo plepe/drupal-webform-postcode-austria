@@ -5,3 +5,11 @@ webform_postcodeapi.admin_settings_form:
     _title: 'Webform Postcode API settings'
   requirements:
     _permission: 'administer webform_postcodeapi'
+
+webform_postcodeapi.address_lookup:
+  path: '/webform_postcodeapi/address_lookup/{zipcode}/{houseNumber}'
+  defaults:
+    _controller: '\Drupal\webform_postcodeapi\Controller\AddressLookupController::getAddress'
+    _title: 'Address lookup'
+  requirements:
+    _access: 'TRUE'

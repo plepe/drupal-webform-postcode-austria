@@ -2,8 +2,6 @@
 
 namespace Drupal\webform_postcodeapi\Element;
 
-use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\NestedArray;
 use Drupal\webform\Element\WebformCompositeBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform_postcodeapi\Classes\FormValidation;
@@ -38,27 +36,17 @@ class WebformPostcodeAPI extends WebformCompositeBase {
    * {@inheritdoc}
    */
   public static function getCompositeElements(array $element) {
-    // Generate an unique ID that can be used by #states.
-    $html_id = $element['#webform_key'] ?? NULL;
-    $wrapper_id = Html::cleanCssIdentifier($html_id) . '--wrapper';
-
     $elements = [];
     $elements['zip_code'] = [
       '#type' => 'textfield',
       '#title' => t('Zip code'),
-      '#prefix' => "<div id='$wrapper_id'>",
+      '#attributes' => ['class' => ['js-webform-postcodeapi-zip-code']],
     ];
     $elements['house_number'] = [
       '#type' => 'number',
       '#title' => t('House number'),
       '#maxlength' => 12,
-      '#ajax' => [
-        'callback' => [static::class, 'autoCompleteAddress'],
-        'wrapper' => $wrapper_id,
-        'method' => 'replace',
-        'event' => 'change',
-        'progress' => ['type' => 'fullscreen'],
-      ],
+      '#attributes' => ['class' => ['js-webform-postcodeapi-house-number']],
     ];
     $elements['house_number_ext'] = [
       '#type' => 'textfield',
@@ -69,13 +57,14 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       '#type' => 'textfield',
       '#title' => t('Street'),
       '#after_build' => [[static::class, 'setDisabledState']],
+      '#attributes' => ['class' => ['js-webform-postcodeapi-street']],
     ];
     $elements['town'] = [
       '#type' => 'textfield',
       '#title' => t('City/Town'),
       '#maxlength' => 60,
       '#after_build' => [[static::class, 'setDisabledState']],
-      '#suffix' => '</div>',
+      '#attributes' => ['class' => ['js-webform-postcodeapi-town']],
     ];
 
     if (empty($element['#required'])) {
@@ -123,55 +112,6 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       [':input[name="' . $composite_name . '[town]"]' => ['empty' => FALSE]],
     ];
     return $element;
-  }
-
-  /**
-   * Ajax callback function for the webform_postcodeapi element.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   *
-   * @return array
-   *   A renderable array as expected by the render service.
-   */
-  public static function autoCompleteAddress(array $form, FormStateInterface $form_state) {
-    $triggeringElement = $form_state->getTriggeringElement();
-    // We need the parent element, but since this is a Webform element the name
-    // is not static.
-    $parent = $triggeringElement['#parents'][0];
-    $addressValues = $form_state->getValues();
-
-    $zipcode = $addressValues[$parent]['zip_code'] ?? '';
-    $houseNumber = $addressValues[$parent]['house_number'] ?? '';
-
-    // Remove the trigger element field.
-    array_pop($triggeringElement['#array_parents']);
-    $form_elements = NestedArray::getValue($form, $triggeringElement['#array_parents']);
-
-    if ($zipcode && $houseNumber && FormValidation::isValidPostalCode($zipcode) && FormValidation::isValidHouseNumber($houseNumber)) {
-      $address = \Drupal::service('webform_postcodeapi.address_lookup')->getAddress($zipcode, $houseNumber);
-      if ($address) {
-        $form_elements['street']['#value'] = $address['street'];
-        $form_elements['town']['#value'] = $address['city'];
-      }
-      else {
-        $form_elements['house_number']['#description'] = t('Could not find a street and city/town for this postal code.');
-        $form_elements['house_number']['#attributes']['class'][] = 'error';
-      }
-    }
-
-    if (!FormValidation::isValidPostalCode($zipcode)) {
-      $form_elements['zip_code']['#description'] = t('Zip code must consist of 4 numbers + 2 letters without spaces.');
-      $form_elements['zip_code']['#attributes']['class'][] = 'error';
-    }
-    if (!FormValidation::isValidHouseNumber($houseNumber)) {
-      $form_elements['house_number']['#description'] = t('The house number is invalid. Please use house number addition for additions to your house number.');
-      $form_elements['house_number']['#attributes']['class'][] = 'error';
-    }
-
-    return $form_elements;
   }
 
   /**
