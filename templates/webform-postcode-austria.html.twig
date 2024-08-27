@@ -11,15 +11,7 @@
  * @ingroup themeable
  */
 #}
-{{ attach_library('webform_postcodeapi/webform_postcodeapi') }}
+{{ attach_library('webform_postcode_austria/webform_postcode_austria') }}
 {{ content.zip_code }}
-<div class="m-form__group">
-    <div class="m-form__group-item m-form__group-item--3">
-        {{ content.house_number }}
-    </div>
-    <div class="m-form__group-item">
-        {{ content.house_number_ext }}
-    </div>
-</div>
-{{ content|without('zip_code','house_number','house_number_ext') }}
+{{ content|without('zip_code') }}
 

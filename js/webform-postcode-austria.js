@@ -7,26 +7,6 @@
   Drupal.WebformPostcodeAustria.checkForAddress = function (addressElement) {
     var $addressElement = $(addressElement);
     var zipcode = $addressElement.find('.js-webform-postcode-austria-zip-code').val();
-    var houseNumber = $addressElement.find('.js-webform-postcode-austria-house-number').val();
-
-    if (Drupal.WebformPostcodeAustria.zipcodePattern.test(zipcode) && houseNumber && Number.isInteger(+houseNumber)) {
-      $.get('/webform_postcode_austria/address_lookup/' + zipcode + '/' + houseNumber, function (data) {
-        var $houseNumberElement = $addressElement.find('.js-webform-postcode-austria-house-number');
-        if ($.isEmptyObject(data)) {
-          Drupal.WebformPostcodeAustria.setErrorForElement($houseNumberElement, Drupal.WebformPostcodeAustria.addressNotFoundMessage);
-        }
-        else {
-          $houseNumberElement.removeClass('error');
-          $houseNumberElement.parent().find('.description').remove();
-          if (data.hasOwnProperty('street')) {
-            $addressElement.find('.js-webform-postcode-austria-street').val(data.street);
-          }
-          if (data.hasOwnProperty('city')) {
-            $addressElement.find('.js-webform-postcode-austria-town').val(data.city);
-          }
-        }
-      });
-    }
   }
 
   Drupal.WebformPostcodeAustria.onZipcodeChange = function (event) {
@@ -59,14 +39,13 @@
     }
   }
 
-  Drupal.behaviors.webformPostcodeAPI = {
+  Drupal.behaviors.webformPostcodeAustria = {
     attach: function (context, settings) {
       if ($(context).find('.js-webform-type-webform-postcode-austria').length) {
         $(context).find('.js-webform-type-webform-postcode-austria').each(function (index, element) {
           $(element)
             .once('webform-postcode-austria')
             .on('change', '.js-webform-postcode-austria-zip-code', Drupal.WebformPostcodeAustria.onZipcodeChange)
-            .on('change', '.js-webform-postcode-austria-house-number', Drupal.WebformPostcodeAustria.onHouseNumberChange);
         });
       }
     }

@@ -36,18 +36,16 @@ class AddressLookupController extends ControllerBase {
   }
 
   /**
-   * Retrieves an address based on zipcode and house number.
+   * Retrieves an address based on zipcode.
    *
    * @param string $zipcode
    *   The zipcode.
-   * @param string $houseNumber
-   *   The house number.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   The address as a JSON response.
    */
-  public function getAddress(string $zipcode, string $houseNumber) {
-    return new JsonResponse($this->addressLookup->getAddress($zipcode, $houseNumber));
+  public function getAddress(string $zipcode) {
+    return new JsonResponse($this->addressLookup->getAddress($zipcode));
   }
 
 }

@@ -12,7 +12,7 @@ use Drupal\webform\WebformSubmissionInterface;
  * @WebformElement(
  *   id = "webform_postcode_austria",
  *   label = @Translation("Webform Postcode API"),
- *   description = @Translation("Provides advanced element for upon entering postal code and house number automatically retrieve street name and town data."),
+ *   description = @Translation("Provides advanced element for upon entering postal code automatically retrieves town/city and state."),
  *   category = @Translation("Composite elements"),
  *   composite = TRUE,
  *   multiline = TRUE,
@@ -42,8 +42,6 @@ class WebformPostcodeAustria extends WebformCompositeBase {
 
     $lines = [];
     $lines[] = ($value['street'] ?: '') .
-      ($value['house_number'] ? ' ' . $value['house_number'] : '') .
-      ($value['house_number_ext'] ? ' ' . $value['house_number_ext'] : '');
     $lines[] = ($value['zip_code'] ?: '') .
       ($value['town'] ? ' ' . $value['town'] : '');
     return $lines;
@@ -70,11 +68,9 @@ class WebformPostcodeAustria extends WebformCompositeBase {
 
     if (!empty($element['#required'])) {
       $element['#zip_code__required'] = TRUE;
-      $element['#house_number__required'] = TRUE;
       $element['#street__required'] = TRUE;
       $element['#town__required'] = TRUE;
       $element['#webform_composite_elements']['zip_code']['#required'] = $element['#required'];
-      $element['#webform_composite_elements']['house_number']['#required'] = $element['#required'];
       $element['#webform_composite_elements']['street']['#required'] = $element['#required'];
       $element['#webform_composite_elements']['town']['#required'] = $element['#required'];
     }

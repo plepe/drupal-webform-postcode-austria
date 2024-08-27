@@ -42,17 +42,6 @@ class WebformPostcodeAustria extends WebformCompositeBase {
       '#title' => t('Zip code'),
       '#attributes' => ['class' => ['js-webform-postcode-austria-zip-code']],
     ];
-    $elements['house_number'] = [
-      '#type' => 'number',
-      '#title' => t('House number'),
-      '#maxlength' => 12,
-      '#attributes' => ['class' => ['js-webform-postcode-austria-house-number']],
-    ];
-    $elements['house_number_ext'] = [
-      '#type' => 'textfield',
-      '#title' => t('House number addition'),
-      '#maxlength' => 8,
-    ];
     $elements['street'] = [
       '#type' => 'textfield',
       '#title' => t('Street'),
@@ -70,7 +59,6 @@ class WebformPostcodeAustria extends WebformCompositeBase {
     if (empty($element['#required'])) {
       $required_composite_elements = [
         'zip_code',
-        'house_number',
         'street',
         'town',
       ];
@@ -91,7 +79,6 @@ class WebformPostcodeAustria extends WebformCompositeBase {
     $composite_name = $match[1];
     $element['#states']['disabled'] = [
       [':input[name="' . $composite_name . '[zip_code]"]' => ['empty' => TRUE]],
-      [':input[name="' . $composite_name . '[house_number]"]' => ['empty' => TRUE]],
     ];
     // Add .js-form-wrapper to wrapper (ie td) to prevent #states API from
     // disabling the entire table row when this element is disabled.
@@ -107,7 +94,6 @@ class WebformPostcodeAustria extends WebformCompositeBase {
     $composite_name = $match[1];
     $element['#states']['required'] = [
       [':input[name="' . $composite_name . '[zip_code]"]' => ['empty' => FALSE]],
-      [':input[name="' . $composite_name . '[house_number]"]' => ['empty' => FALSE]],
       [':input[name="' . $composite_name . '[street]"]' => ['empty' => FALSE]],
       [':input[name="' . $composite_name . '[town]"]' => ['empty' => FALSE]],
     ];
@@ -128,7 +114,6 @@ class WebformPostcodeAustria extends WebformCompositeBase {
     // phpcs:enable
     $required_composite_elements = [
       'zip_code',
-      'house_number',
       'street',
       'town',
     ];
@@ -151,18 +136,8 @@ class WebformPostcodeAustria extends WebformCompositeBase {
     }
 
     $zip_code = $element['zip_code']['#value'];
-    $house_number = $element['house_number']['#value'];
-    $house_number_ext = $element['house_number_ext']['#value'];
     if (!FormValidation::isValidPostalCode($zip_code)) {
       $form_state->setError($element['zip_code'], t('Zip code must consist of 4 numbers + 2 letters without spaces.'));
-    }
-
-    if (!FormValidation::isValidHouseNumber($house_number)) {
-      $form_state->setError($element['house_number'], t('The house number is invalid. Please use house number addition for additions to your house number.'));
-    }
-
-    if (!FormValidation::isValidHouseNumberAddition($house_number_ext)) {
-      $form_state->setError($element['house_number_ext'], t('The house number addition is invalid, please use only numbers and/or letters.'));
     }
   }
 

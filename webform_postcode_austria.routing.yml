@@ -1,13 +1,13 @@
 webform_postcode_austria.admin_settings_form:
   path: '/admin/config/services/webform_postcode_austria'
   defaults:
-    _form: '\Drupal\webform_postcode_austria\Form\WebformPostcodeAPISettingsForm'
-    _title: 'Webform Postcode API settings'
+    _form: '\Drupal\webform_postcode_austria\Form\WebformPostcodeAustriaSettingsForm'
+    _title: 'Webform Postcode Austria settings'
   requirements:
     _permission: 'administer webform_postcode_austria'
 
 webform_postcode_austria.address_lookup:
-  path: '/webform_postcode_austria/address_lookup/{zipcode}/{houseNumber}'
+  path: '/webform_postcode_austria/address_lookup/{zipcode}'
   defaults:
     _controller: '\Drupal\webform_postcode_austria\Controller\AddressLookupController::getAddress'
     _title: 'Address lookup'

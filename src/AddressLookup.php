@@ -53,35 +53,33 @@ class AddressLookup {
   }
 
   /**
-   * Retrieves an address based on zipcode and house number.
+   * Retrieves an address based on zipcode.
    *
    * @param string $zipcode
    *   The zipcode.
-   * @param string $houseNumber
-   *   The house number.
    *
    * @return array|null
    *   An address array when available, or NULL.
    */
-  public function getAddress(string $zipcode, string $houseNumber) {
+  public function getAddress(string $zipcode) {
     $api_url = $this->config->get('postcodenlapi_url');
     $api_key = $this->config->get('postcodenlapi_key');
 
-    if (empty($zipcode) || empty($houseNumber) || empty($api_key)) {
+    if (empty($zipcode) || empty($api_key)) {
       return NULL;
     }
 
-    if (!FormValidation::isValidPostalcode($zipcode) || !FormValidation::isValidHouseNumber($houseNumber)) {
+    if (!FormValidation::isValidPostalcode($zipcode)) {
       return NULL;
     }
 
-    $cache_id = implode(':', ['webform_postcode_austria', $zipcode, $houseNumber]);
+    $cache_id = implode(':', ['webform_postcode_austria', $zipcode]);
     $cache = $this->cacheBackend->get($cache_id);
     if ($cache) {
       return Json::decode($cache->data);
     }
     $zipcode = preg_replace('/\s/', '', $zipcode);
-    $url = implode('/', [$api_url, $zipcode, $houseNumber]);
+    $url = implode('/', [$api_url, $zipcode]);
     $request = new Request('GET', $url);
 
     try {
