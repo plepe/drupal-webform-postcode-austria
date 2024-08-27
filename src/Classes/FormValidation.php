@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\webform_postcodeapi\Classes;
+namespace Drupal\webform_postcode_austria\Classes;
 
 /**
  * Form validation functions.

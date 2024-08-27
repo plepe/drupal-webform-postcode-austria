@@ -1,5 +1,0 @@
-webform_postcodeapi.admin:
-  title: 'Webform Postcode API'
-  parent: system.admin_config_services
-  route_name: webform_postcodeapi.admin_settings_form
-  weight: 100

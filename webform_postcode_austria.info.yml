@@ -1,0 +1,7 @@
+name: 'Webform Postcode Austria'
+type: module
+description: 'Provides a composite Webform address element with autocompletion based on Austria Postal Codes.'
+package: Webform
+core_version_requirement: ^9.2 || ^10
+dependencies:
+  - 'webform:webform'

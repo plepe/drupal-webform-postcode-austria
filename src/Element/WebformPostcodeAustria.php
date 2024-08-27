@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\webform_postcodeapi\Element;
+namespace Drupal\webform_postcode_austria\Element;
 
 use Drupal\webform\Element\WebformCompositeBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\webform_postcodeapi\Classes\FormValidation;
+use Drupal\webform_postcode_austria\Classes\FormValidation;
 
 /**
- * Provides a 'webform_postcodeapi' composite webform element.
+ * Provides a 'webform_postcode_austria' composite webform element.
  *
  * Webform composites contain a group of sub-elements.
  *
@@ -16,18 +16,18 @@ use Drupal\webform_postcodeapi\Classes\FormValidation;
  * Webform composite can not contain multiple value elements (i.e. checkboxes)
  * or composites (i.e. webform_address)
  *
- * @FormElement("webform_postcodeapi")
+ * @FormElement("webform_postcode_austria")
  */
-class WebformPostcodeAPI extends WebformCompositeBase {
+class WebformPostcodeAustria extends WebformCompositeBase {
 
   /**
    * {@inheritdoc}
    */
   public function getInfo() {
     return parent::getInfo() + [
-      '#theme' => 'webform_postcodeapi',
+      '#theme' => 'webform_postcode_austria',
       '#element_validate' => [
-        [static::class, 'validateWebformPostcodeAPI'],
+        [static::class, 'validateWebformPostcodeAustria'],
       ],
     ];
   }
@@ -40,13 +40,13 @@ class WebformPostcodeAPI extends WebformCompositeBase {
     $elements['zip_code'] = [
       '#type' => 'textfield',
       '#title' => t('Zip code'),
-      '#attributes' => ['class' => ['js-webform-postcodeapi-zip-code']],
+      '#attributes' => ['class' => ['js-webform-postcode-austria-zip-code']],
     ];
     $elements['house_number'] = [
       '#type' => 'number',
       '#title' => t('House number'),
       '#maxlength' => 12,
-      '#attributes' => ['class' => ['js-webform-postcodeapi-house-number']],
+      '#attributes' => ['class' => ['js-webform-postcode-austria-house-number']],
     ];
     $elements['house_number_ext'] = [
       '#type' => 'textfield',
@@ -57,14 +57,14 @@ class WebformPostcodeAPI extends WebformCompositeBase {
       '#type' => 'textfield',
       '#title' => t('Street'),
       '#after_build' => [[static::class, 'setDisabledState']],
-      '#attributes' => ['class' => ['js-webform-postcodeapi-street']],
+      '#attributes' => ['class' => ['js-webform-postcode-austria-street']],
     ];
     $elements['town'] = [
       '#type' => 'textfield',
       '#title' => t('City/Town'),
       '#maxlength' => 60,
       '#after_build' => [[static::class, 'setDisabledState']],
-      '#attributes' => ['class' => ['js-webform-postcodeapi-town']],
+      '#attributes' => ['class' => ['js-webform-postcode-austria-town']],
     ];
 
     if (empty($element['#required'])) {
@@ -124,7 +124,7 @@ class WebformPostcodeAPI extends WebformCompositeBase {
    *   The current state of the form for the form this element belongs to.
    */
   // phpcs:disable
-  public static function validateWebformPostcodeAPI(array &$element, FormStateInterface $form_state) {
+  public static function validateWebformPostcodeAustria(array &$element, FormStateInterface $form_state) {
     // phpcs:enable
     $required_composite_elements = [
       'zip_code',

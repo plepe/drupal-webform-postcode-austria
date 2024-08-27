@@ -1,7 +1,0 @@
-name: 'Webform Postcode API'
-type: module
-description: 'Provides a composite Webform address element with autocompletion based on PostcodeAPI.nu data.'
-package: Webform
-core_version_requirement: ^9.2 || ^10
-dependencies:
-  - 'webform:webform'

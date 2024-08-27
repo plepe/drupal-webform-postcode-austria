@@ -1,16 +1,16 @@
 <?php
 
-namespace Drupal\webform_postcodeapi\Plugin\WebformElement;
+namespace Drupal\webform_postcode_austria\Plugin\WebformElement;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Plugin\WebformElement\WebformCompositeBase;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
- * Provides a 'webform_postcodeapi' element.
+ * Provides a 'webform_postcode_austria' element.
  *
  * @WebformElement(
- *   id = "webform_postcodeapi",
+ *   id = "webform_postcode_austria",
  *   label = @Translation("Webform Postcode API"),
  *   description = @Translation("Provides advanced element for upon entering postal code and house number automatically retrieve street name and town data."),
  *   category = @Translation("Composite elements"),
@@ -19,13 +19,13 @@ use Drupal\webform\WebformSubmissionInterface;
  *   states_wrapper = TRUE
  * )
  *
- * @see \Drupal\webform_postcodeapi\Element\WebformPostcodeAPI
+ * @see \Drupal\webform_postcode_austria\Element\WebformPostcodeAustria
  * @see \Drupal\webform\Plugin\WebformElement\WebformCompositeBase
  * @see \Drupal\webform\Plugin\WebformElementBase
  * @see \Drupal\webform\Plugin\WebformElementInterface
  * @see \Drupal\webform\Annotation\WebformElement
  */
-class WebformPostcodeAPI extends WebformCompositeBase {
+class WebformPostcodeAustria extends WebformCompositeBase {
 
   /**
    * {@inheritdoc}

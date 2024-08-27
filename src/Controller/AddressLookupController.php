@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\webform_postcodeapi\Controller;
+namespace Drupal\webform_postcode_austria\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\webform_postcodeapi\AddressLookup;
+use Drupal\webform_postcode_austria\AddressLookup;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -15,14 +15,14 @@ class AddressLookupController extends ControllerBase {
   /**
    * The address lookup service.
    *
-   * @var \Drupal\webform_postcodeapi\AddressLookup
+   * @var \Drupal\webform_postcode_austria\AddressLookup
    */
   protected $addressLookup;
 
   /**
    * AddressLookupController constructor.
    *
-   * @param \Drupal\webform_postcodeapi\AddressLookup $address_lookup
+   * @param \Drupal\webform_postcode_austria\AddressLookup $address_lookup
    *   The address lookup service.
    */
   public function __construct(AddressLookup $address_lookup) {
@@ -31,7 +31,7 @@ class AddressLookupController extends ControllerBase {
 
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('webform_postcodeapi.address_lookup')
+      $container->get('webform_postcode_austria.address_lookup')
     );
   }
 

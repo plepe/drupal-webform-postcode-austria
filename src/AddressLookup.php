@@ -1,12 +1,12 @@
 <?php
 
-namespace Drupal\webform_postcodeapi;
+namespace Drupal\webform_postcode_austria;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Http\ClientFactory;
-use Drupal\webform_postcodeapi\Classes\FormValidation;
+use Drupal\webform_postcode_austria\Classes\FormValidation;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 
@@ -30,7 +30,7 @@ class AddressLookup {
   protected $httpClientFactory;
 
   /**
-   * Webform Postcode API configuration.
+   * Webform Postcode Austria configuration.
    *
    * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
    */
@@ -49,7 +49,7 @@ class AddressLookup {
   public function __construct(CacheBackendInterface $cache_backend, ClientFactory $client_factory, ConfigFactory $config_factory) {
     $this->cacheBackend = $cache_backend;
     $this->httpClientFactory = $client_factory;
-    $this->config = $config_factory->get('webform_postcodeapi.settings');
+    $this->config = $config_factory->get('webform_postcode_austria.settings');
   }
 
   /**
@@ -75,7 +75,7 @@ class AddressLookup {
       return NULL;
     }
 
-    $cache_id = implode(':', ['webform_postcodeapi', $zipcode, $houseNumber]);
+    $cache_id = implode(':', ['webform_postcode_austria', $zipcode, $houseNumber]);
     $cache = $this->cacheBackend->get($cache_id);
     if ($cache) {
       return Json::decode($cache->data);
@@ -97,7 +97,7 @@ class AddressLookup {
       return Json::decode($response_body);
     }
     catch (RequestException $e) {
-      watchdog_exception('webform_postcodeapi', $e);
+      watchdog_exception('webform_postcode_austria', $e);
       return NULL;
     }
   }
