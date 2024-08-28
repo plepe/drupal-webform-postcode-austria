@@ -37,30 +37,31 @@ class WebformPostcodeAustria extends WebformCompositeBase {
    */
   public static function getCompositeElements(array $element) {
     $elements = [];
-    $elements['zip_code'] = [
+    $elements['plz'] = [
       '#type' => 'textfield',
-      '#title' => t('Zip code'),
-      '#attributes' => ['class' => ['js-webform-postcode-austria-zip-code']],
+      '#title' => t('Postal code'),
+      '#attributes' => ['class' => ['js-webform-postcode-austria-plz']],
     ];
-    $elements['street'] = [
-      '#type' => 'textfield',
-      '#title' => t('Street'),
-      '#after_build' => [[static::class, 'setDisabledState']],
-      '#attributes' => ['class' => ['js-webform-postcode-austria-street']],
-    ];
-    $elements['town'] = [
+    $elements['ort'] = [
       '#type' => 'textfield',
       '#title' => t('City/Town'),
       '#maxlength' => 60,
       '#after_build' => [[static::class, 'setDisabledState']],
-      '#attributes' => ['class' => ['js-webform-postcode-austria-town']],
+      '#attributes' => ['class' => ['js-webform-postcode-austria-ort']],
+    ];
+    $elements['bundesland'] = [
+      '#type' => 'textfield',
+      '#title' => t('Bundesland'),
+      '#maxlength' => 60,
+      '#after_build' => [[static::class, 'setDisabledState']],
+      '#attributes' => ['class' => ['js-webform-postcode-austria-bundesland']],
     ];
 
     if (empty($element['#required'])) {
       $required_composite_elements = [
-        'zip_code',
-        'street',
-        'town',
+        'plz',
+        'ort',
+        'bundesland',
       ];
       foreach ($required_composite_elements as $required_composite_element) {
         $elements[$required_composite_element]['#after_build'][] = [static::class, 'setRequiredState'];
@@ -78,7 +79,7 @@ class WebformPostcodeAustria extends WebformCompositeBase {
     preg_match('/^(.+)\[[^]]+]$/', $element['#name'], $match);
     $composite_name = $match[1];
     $element['#states']['disabled'] = [
-      [':input[name="' . $composite_name . '[zip_code]"]' => ['empty' => TRUE]],
+      [':input[name="' . $composite_name . '[plz]"]' => ['empty' => TRUE]],
     ];
     // Add .js-form-wrapper to wrapper (ie td) to prevent #states API from
     // disabling the entire table row when this element is disabled.
@@ -93,9 +94,9 @@ class WebformPostcodeAustria extends WebformCompositeBase {
     preg_match('/^(.+)\[[^]]+]$/', $element['#name'], $match);
     $composite_name = $match[1];
     $element['#states']['required'] = [
-      [':input[name="' . $composite_name . '[zip_code]"]' => ['empty' => FALSE]],
-      [':input[name="' . $composite_name . '[street]"]' => ['empty' => FALSE]],
-      [':input[name="' . $composite_name . '[town]"]' => ['empty' => FALSE]],
+      [':input[name="' . $composite_name . '[plz]"]' => ['empty' => FALSE]],
+      [':input[name="' . $composite_name . '[ort]"]' => ['empty' => FALSE]],
+      [':input[name="' . $composite_name . '[bundesland]"]' => ['empty' => FALSE]],
     ];
     return $element;
   }
@@ -113,9 +114,9 @@ class WebformPostcodeAustria extends WebformCompositeBase {
   public static function validateWebformPostcodeAustria(array &$element, FormStateInterface $form_state) {
     // phpcs:enable
     $required_composite_elements = [
-      'zip_code',
-      'street',
-      'town',
+      'plz',
+      'ort',
+      'bundesland',
     ];
     $element_has_data = FALSE;
     foreach ($required_composite_elements as $required_composite_element) {
@@ -135,9 +136,9 @@ class WebformPostcodeAustria extends WebformCompositeBase {
       }
     }
 
-    $zip_code = $element['zip_code']['#value'];
-    if (!FormValidation::isValidPostalCode($zip_code)) {
-      $form_state->setError($element['zip_code'], t('Zip code must consist of 4 numbers + 2 letters without spaces.'));
+    $plz = $element['plz']['#value'];
+    if (!FormValidation::isValidPostalCode($plz)) {
+      $form_state->setError($element['plz'], t('Postal code must consist of 4 numbers.'));
     }
   }
 

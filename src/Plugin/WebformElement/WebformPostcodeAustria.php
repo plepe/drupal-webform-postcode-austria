@@ -41,9 +41,9 @@ class WebformPostcodeAustria extends WebformCompositeBase {
     $value = $this->getValue($element, $webform_submission, $options);
 
     $lines = [];
-    $lines[] = ($value['street'] ?: '') .
-    $lines[] = ($value['zip_code'] ?: '') .
-      ($value['town'] ? ' ' . $value['town'] : '');
+    $lines[] = ($value['plz'] ?: '') .
+      ($value['ort'] ? ' ' . $value['ort'] : '') .
+      ($value['bundesland'] ? ' (' . $value['bundesland'] . ')' : '');
     return $lines;
   }
 
@@ -67,12 +67,12 @@ class WebformPostcodeAustria extends WebformCompositeBase {
     parent::prepare($element, $webform_submission);
 
     if (!empty($element['#required'])) {
-      $element['#zip_code__required'] = TRUE;
-      $element['#street__required'] = TRUE;
-      $element['#town__required'] = TRUE;
-      $element['#webform_composite_elements']['zip_code']['#required'] = $element['#required'];
-      $element['#webform_composite_elements']['street']['#required'] = $element['#required'];
-      $element['#webform_composite_elements']['town']['#required'] = $element['#required'];
+      $element['#plz__required'] = TRUE;
+      $element['#ort__required'] = TRUE;
+      $element['#bundesland__required'] = TRUE;
+      $element['#webform_composite_elements']['plz']['#required'] = $element['#required'];
+      $element['#webform_composite_elements']['ort']['#required'] = $element['#required'];
+      $element['#webform_composite_elements']['bundesland']['#required'] = $element['#required'];
     }
   }
 
