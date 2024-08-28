@@ -50,7 +50,7 @@ class PostcodeLookup {
     $data = [];
 
     foreach ($contents['data'] as $item) {
-      $data[$item['plz']] = $item;
+      $data[$item['plz']] = $this->convert($item);
     }
 
     $this->data = $data;
@@ -72,4 +72,27 @@ class PostcodeLookup {
 
     return $this->data[$postcode];
   }
+
+  public function convert ($item) {
+    $bundeslandMapping = [
+      'W' => 'Wien',
+      'N' => 'Niederösterreich',
+      'S' => 'Salzburg',
+      'V' => 'Vorarlberg',
+      'St' => 'Steiermark',
+      'K' => 'Kärnten',
+      'B' => 'Burgenland',
+      'O' => 'Oberösterreich',
+      'T' => 'Tirol',
+    ];
+
+    $result = [
+      'plz' => $item['plz'],
+      'ort' => $item['bundesland'] === 'W' ? $item['bezirk'] : $item['ort'],
+      'bundesland' => $bundeslandMapping[$item['bundesland']],
+    ];
+
+    return $result;
+  }
+
 }
