@@ -6,10 +6,10 @@ webform_postcode_austria.admin_settings_form:
   requirements:
     _permission: 'administer webform_postcode_austria'
 
-webform_postcode_austria.address_lookup:
-  path: '/webform_postcode_austria/address_lookup/{zipcode}'
+webform_postcode_austria.postcode_lookup:
+  path: '/webform_postcode_austria/postcode_lookup/{postcode}'
   defaults:
-    _controller: '\Drupal\webform_postcode_austria\Controller\AddressLookupController::getAddress'
-    _title: 'Address lookup'
+    _controller: '\Drupal\webform_postcode_austria\Controller\PostcodeLookupController::getPostcode'
+    _title: 'Postcode lookup'
   requirements:
     _access: 'TRUE'
