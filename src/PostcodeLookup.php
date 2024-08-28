@@ -3,6 +3,7 @@
 namespace Drupal\webform_postcode_austria;
 
 use Drupal\Component\Serialization\Json;
+use Drupal\Core\Cache\CacheBackendInterface;
 
 /**
  * Perform postcode lookup.
@@ -10,7 +11,30 @@ use Drupal\Component\Serialization\Json;
 class PostcodeLookup {
   protected $data;
 
+  /**
+   * The cache backend.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface
+   */
+  protected $cacheBackend;
+
+  /**
+   * Constructs a new PostcodeLookup.
+   *
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
+   *   The cache backend.
+   */
+  public function __construct(CacheBackendInterface $cache_backend) {
+    $this->cacheBackend = $cache_backend;
+  }
+
   public function loadData () {
+    $cache = $this->cacheBackend->get('webform_postcode_austria:data');
+    if ($cache) {
+      $this->data = $cache->data;
+      return;
+    }
+
     $contents = file_get_contents('https://data.rtr.at/api/v1/tables/plz.json');
     if ($contents === false) {
       watchdog_exception('webform_postcode_austria', new \Exception('Error downloading PLZ JSON: "' . error_get_last()['message'] . '"'));
@@ -30,10 +54,13 @@ class PostcodeLookup {
     }
 
     $this->data = $data;
+    $this->cacheBackend->set('webform_postcode_austria:data', $data, strtotime('+24 hour'));
   }
 
   public function getPostcode(string $postcode) {
-    $this->loadData();
+    if (!$this->data) {
+      $this->loadData();
+    }
 
     if (!$this->data) {
       return null;
