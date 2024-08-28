@@ -56,6 +56,7 @@
       if ($(context).find('.js-webform-type-webform-postcode-austria').length) {
         $(context).find('.js-webform-type-webform-postcode-austria').each(function (index, element) {
           $(once('webform-postcode-austria', element))
+            .on('keyup', '.js-webform-postcode-austria-plz', Drupal.WebformPostcodeAustria.onPlzChange)
             .on('change', '.js-webform-postcode-austria-plz', Drupal.WebformPostcodeAustria.onPlzChange)
         });
       }
