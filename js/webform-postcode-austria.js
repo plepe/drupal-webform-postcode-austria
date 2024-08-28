@@ -37,8 +37,7 @@
     attach: function (context, settings) {
       if ($(context).find('.js-webform-type-webform-postcode-austria').length) {
         $(context).find('.js-webform-type-webform-postcode-austria').each(function (index, element) {
-          $(element)
-            .once('webform-postcode-austria')
+          $(once('webform-postcode-austria', element))
             .on('change', '.js-webform-postcode-austria-plz', Drupal.WebformPostcodeAustria.onPlzChange)
         });
       }
