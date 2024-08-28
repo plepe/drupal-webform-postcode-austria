@@ -14,6 +14,10 @@
     }
     else if ($inputElement.val()) {
       Drupal.WebformPostcodeAustria.setErrorForElement($inputElement, Drupal.WebformPostcodeAustria.plzInvalidMessage);
+
+      var $element = $(event.delegateTarget);
+      $element.find('.js-webform-postcode-austria-ort').val('');
+      $element.find('.js-webform-postcode-austria-bundesland').val('');
     }
   }
 
@@ -25,16 +29,14 @@
        var $plzElement = $element.find('.js-webform-postcode-austria-plz');
        if ($.isEmptyObject(data)) {
           Drupal.WebformPostcodeAustria.setErrorForElement($plzElement, Drupal.WebformPostcodeAustria.postcodeNotFoundMessage);
+          $element.find('.js-webform-postcode-austria-ort').val('');
+          $element.find('.js-webform-postcode-austria-bundesland').val('');
         }
         else {
           $plzElement.removeClass('error');
           $plzElement.parent().find('.description').remove();
-          if (data.hasOwnProperty('ort')) {
-            $element.find('.js-webform-postcode-austria-ort').val(data.ort);
-          }
-          if (data.hasOwnProperty('bundesland')) {
-            $element.find('.js-webform-postcode-austria-bundesland').val(data.bundesland);
-          }
+          $element.find('.js-webform-postcode-austria-ort').val(data.hasOwnProperty('ort') ? data.ort : '');
+          $element.find('.js-webform-postcode-austria-bundesland').val(data.hasOwnProperty('bundesland') ? data.bundesland : '');
         }
 
     })
