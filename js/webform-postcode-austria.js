@@ -4,18 +4,11 @@
   Drupal.WebformPostcodeAustria.plzInvalidMessage = Drupal.t('Postal code must consist of 4 numbers.');
   Drupal.WebformPostcodeAustria.addressNotFoundMessage = Drupal.t('Could not find a city/town for this postal code.');
 
-  Drupal.WebformPostcodeAustria.checkForAddress = function (addressElement) {
-    var $addressElement = $(addressElement);
-    var plz = $addressElement.find('.js-webform-postcode-austria-plz').val();
-    console.log(plz)
-  }
-
   Drupal.WebformPostcodeAustria.onPlzChange = function (event) {
     var $inputElement = $(event.currentTarget);
     if (Drupal.WebformPostcodeAustria.plzPattern.test($inputElement.val())) {
       $inputElement.removeClass('error');
       $inputElement.parent().find('.description').remove();
-      Drupal.WebformPostcodeAustria.checkForAddress(event.delegateTarget);
     }
     else if ($inputElement.val()) {
       Drupal.WebformPostcodeAustria.setErrorForElement($inputElement, Drupal.WebformPostcodeAustria.plzInvalidMessage);
