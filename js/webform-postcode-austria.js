@@ -39,6 +39,8 @@
           $element.find('.js-webform-postcode-austria-bundesland').val(data.hasOwnProperty('bundesland') ? data.bundesland : '');
         }
 
+        trigger($element.find('.js-webform-postcode-austria-ort'), 'change');
+        trigger($element.find('.js-webform-postcode-austria-bundesland'), 'change');
     })
   }
 
@@ -63,5 +65,12 @@
         });
       }
     }
-  };
+  }
+
+  function trigger (elements, eventId) {
+    const event = new Event(eventId);
+    for (let i = 0; i < elements.length; i++) {
+      elements[i].dispatchEvent(event);
+    }
+  }
 })(jQuery, Drupal);
