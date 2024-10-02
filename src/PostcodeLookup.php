@@ -36,7 +36,14 @@ class PostcodeLookup {
       return;
     }
 
-    $contents = file_get_contents('https://assets.post.at/-/media/Dokumente/De/Geschaeftlich/Werben/PLZ_Verzeichnis_20241001.xlsx');
+    $page = file_get_contents('https://www.post.at/g/c/postlexikon');
+    if (!preg_match('/"PLZ Verzeichnis" href="(.*)" download/', $page, $m)) {
+      watchdog_exception('webform_postcode_austria', new \Exception('Can\'t parse URL of PLZ XLSX from Postlexikon: "' . error_get_last()['message'] . '"'));
+      return;
+    }
+    $xlsxUrl = $m[1];
+
+    $contents = file_get_contents($xlsxUrl);
     if ($contents === false) {
       watchdog_exception('webform_postcode_austria', new \Exception('Error downloading PLZ XLSX: "' . error_get_last()['message'] . '"'));
       return;
