@@ -4,6 +4,7 @@ namespace Drupal\webform_postcode_austria;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Cache\CacheBackendInterface;
+use PhpOffice\PhpSpreadsheet\Reader;
 
 /**
  * Perform postcode lookup.
@@ -35,22 +36,29 @@ class PostcodeLookup {
       return;
     }
 
-    $contents = file_get_contents('https://data.rtr.at/api/v1/tables/plz.json');
+    $contents = file_get_contents('https://assets.post.at/-/media/Dokumente/De/Geschaeftlich/Werben/PLZ_Verzeichnis_20241001.xlsx');
     if ($contents === false) {
-      watchdog_exception('webform_postcode_austria', new \Exception('Error downloading PLZ JSON: "' . error_get_last()['message'] . '"'));
+      watchdog_exception('webform_postcode_austria', new \Exception('Error downloading PLZ XLSX: "' . error_get_last()['message'] . '"'));
       return;
     }
+    file_put_contents('/tmp/postcode_austria.xlsx', $contents);
 
-    $contents = Json::decode($contents);
-    if ($contents === null) {
-      watchdog_exception('webform_postcode_austria', new \Exception('Error parsing PLZ JSON: "' . json_last_error_msg() . '"'));
-      return;
-    }
+    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+    $reader->setReadDataOnly(true);
+    $spreadsheet = $reader->load('/tmp/postcode_austria.xlsx');
 
+    $worksheet = $spreadsheet->getActiveSheet();
+    $contents = $worksheet->toArray();
+
+    $columns = array_shift($contents);
     $data = [];
+    foreach ($contents as $row) {
+      $item = [];
+      foreach ($columns as $i => $col) {
+        $item[$col] = $row[$i];
+      }
 
-    foreach ($contents['data'] as $item) {
-      $data[$item['plz']] = $this->convert($item);
+      $data[$item['PLZ']] = $this->convert($item);
     }
 
     $this->data = $data;
@@ -87,9 +95,9 @@ class PostcodeLookup {
     ];
 
     $result = [
-      'plz' => $item['plz'],
-      'ort' => $item['bundesland'] === 'W' ? $item['bezirk'] : $item['ort'],
-      'bundesland' => $bundeslandMapping[$item['bundesland']],
+      'plz' => $item['PLZ'],
+      'ort' => $item['Ort'],
+      'bundesland' => $bundeslandMapping[$item['Bundesland']],
     ];
 
     return $result;
