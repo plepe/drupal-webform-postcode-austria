@@ -1,0 +1,9 @@
+{
+  "name": "drupal/webform_postcode_austria",
+  "description": "Provides a composite Webform address element with autocompletion based on Austria Postal Codes.",
+  "type": "drupal/module",
+  "homepage": "drupal.org/project/webform_postcode_austria",
+  "license": "GPL-2.0-or-later",
+  "require": {
+  }
+}
