@@ -29,13 +29,7 @@ class PostcodeLookup {
     $this->cacheBackend = $cache_backend;
   }
 
-  public function loadData () {
-    $cache = $this->cacheBackend->get('webform_postcode_austria:data');
-    if ($cache) {
-      $this->data = $cache->data;
-      return;
-    }
-
+  public function importData () {
     $page = file_get_contents('https://www.post.at/g/c/postlexikon');
     if (!preg_match('/"PLZ Verzeichnis" href="(.*)" download/', $page, $m)) {
       watchdog_exception('webform_postcode_austria', new \Exception('Can\'t parse URL of PLZ XLSX from Postlexikon: "' . error_get_last()['message'] . '"'));
@@ -68,8 +62,19 @@ class PostcodeLookup {
       $data[$item['PLZ']] = $this->convert($item);
     }
 
-    $this->data = $data;
     $this->cacheBackend->set('webform_postcode_austria:data', $data, strtotime('+24 hour'));
+  }
+
+  public function loadData () {
+    $cache = $this->cacheBackend->get('webform_postcode_austria:data');
+    if ($cache) {
+      $this->data = $cache->data;
+      return;
+    }
+
+    $this->importData();
+
+    $this->data = $data;
   }
 
   public function getPostcode(string $postcode) {
