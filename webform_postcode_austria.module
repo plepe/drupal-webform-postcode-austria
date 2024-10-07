@@ -1,5 +1,8 @@
 <?php
 
+use Drupal\Core\Database\Database;
+use Drupal\Core\Cache\Cache;
+
 /**
  * @file
  * Hook implementations for this module.
@@ -30,4 +33,95 @@ function webform_postcode_austria_theme() {
 function template_preprocess_webform_postcode_austria(array &$variables) {
   // Here you can get the composite element and alter it.
   _template_preprocess_webform_composite($variables);
+}
+
+/**
+ * Implements hook_cron().
+ */
+function webform_postcode_austria_cron() {
+  $last_imported_file = \Drupal::config('webform_postcode_austria.settings')->get('last_imported_file');
+
+  // Check if the file has been modified since the last import.
+  $url = webform_postcode_austria_get_current_url();
+  if ($url && $url !== $last_imported_file) {
+    webform_postcode_austria_import_data();
+  }
+}
+
+function webform_postcode_austria_get_current_url() {
+  $page = file_get_contents('https://www.post.at/g/c/postlexikon');
+  if (!preg_match('/"PLZ Verzeichnis" href="(.*)" download/', $page, $m)) {
+    watchdog_exception('webform_postcode_austria', new \Exception('Can\'t parse URL of PLZ XLSX from Postlexikon: "' . error_get_last()['message'] . '"'));
+    return;
+  }
+
+  return $m[1];
+}
+
+/**
+ * Import data to the database
+ */
+function webform_postcode_austria_import_data() {
+  $xlsxUrl = webform_postcode_austria_get_current_url();
+
+  $contents = file_get_contents($xlsxUrl);
+  if ($contents === false) {
+    watchdog_exception('webform_postcode_austria', new \Exception('Error downloading PLZ XLSX: "' . error_get_last()['message'] . '"'));
+    return;
+  }
+  file_put_contents('/tmp/postcode_austria.xlsx', $contents);
+
+  $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+  $reader->setReadDataOnly(true);
+  $spreadsheet = $reader->load('/tmp/postcode_austria.xlsx');
+
+  $worksheet = $spreadsheet->getActiveSheet();
+  $contents = $worksheet->toArray();
+
+  $columns = array_shift($contents);
+  $data = [];
+  foreach ($contents as $row) {
+    $item = [];
+    foreach ($columns as $i => $col) {
+      $item[$col] = $row[$i];
+    }
+
+    $data[$item['PLZ']] = webform_postcode_austria_convert_item($item);
+  }
+
+  // Save data to the database.
+  $connection = Database::getConnection();
+  foreach ($data as $row) {
+    // Assuming the CSV has two columns: 'name' and 'value'.
+    $connection->insert('webform_postcode_austria')
+      ->fields($row)
+      ->execute();
+  }
+
+  // Update the last imported time.
+  \Drupal::configFactory()->getEditable('webform_postcode_austria.settings')
+    ->set('last_imported_file', $xlsxUrl)
+    ->save();
+}
+
+function webform_postcode_austria_convert_item($item) {
+  $bundeslandMapping = [
+    'W' => 'Wien',
+    'N' => 'Niederösterreich',
+    'Sa' => 'Salzburg',
+    'V' => 'Vorarlberg',
+    'St' => 'Steiermark',
+    'K' => 'Kärnten',
+    'B' => 'Burgenland',
+    'O' => 'Oberösterreich',
+    'T' => 'Tirol',
+  ];
+
+  $result = [
+    'plz' => $item['PLZ'],
+    'ort' => $item['Ort'],
+    'bundesland' => $bundeslandMapping[$item['Bundesland']],
+  ];
+
+  return $result;
 }

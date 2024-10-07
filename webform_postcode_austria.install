@@ -1,0 +1,44 @@
+<?php
+
+use Drupal\Core\Database\Schema;
+
+/**
+ * Implements hook_schema().
+ */
+function webform_postcode_austria_schema() {
+  $schema['webform_postcode_austria'] = [
+    'description' => 'Table to store Postcodes in Austria.',
+    'fields' => [
+      'plz' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Postleitzahl',
+      ],
+      'ort' => [
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'Ortsname',
+      ],
+      'bundesland' => [
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'Name des Bundeslandes',
+      ],
+    ],
+    'primary key' => ['plz'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function webform_postcode_austria_install() {
+  // Set the initial last imported time to 0.
+  \Drupal::configFactory()->getEditable('webform_postcode_austria.settings')
+    ->set('last_imported_time', 0)
+    ->save();
+
+  webform_postcode_austria_import_data();
+}
