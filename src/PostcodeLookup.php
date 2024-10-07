@@ -2,10 +2,7 @@
 
 namespace Drupal\webform_postcode_austria;
 
-use Drupal\Component\Serialization\Json;
-use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Database;
-use PhpOffice\PhpSpreadsheet\Reader;
 
 /**
  * Perform postcode lookup.
