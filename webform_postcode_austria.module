@@ -90,8 +90,13 @@ function webform_postcode_austria_import_data() {
 
   // Save data to the database.
   $connection = Database::getConnection();
+
+  // clear existing data from table
+  $connection->delete('webform_postcode_austria')
+    ->execute();
+
+  // now, copy all rows into the table
   foreach ($data as $row) {
-    // Assuming the CSV has two columns: 'name' and 'value'.
     $connection->insert('webform_postcode_austria')
       ->fields($row)
       ->execute();
