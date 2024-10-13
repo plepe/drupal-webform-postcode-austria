@@ -91,6 +91,9 @@ function webform_postcode_austria_import_data() {
   // Save data to the database.
   $connection = Database::getConnection();
 
+  // use a transaction for updating table contents
+  $transaction = $connection->startTransaction();
+
   // clear existing data from table
   $connection->delete('webform_postcode_austria')
     ->execute();
@@ -101,6 +104,9 @@ function webform_postcode_austria_import_data() {
       ->fields($row)
       ->execute();
   }
+
+  // done -> commit transaction
+  unset($transaction);
 
   // Update the last imported time.
   \Drupal::configFactory()->getEditable('webform_postcode_austria.settings')
